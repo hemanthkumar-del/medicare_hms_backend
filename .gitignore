@@ -1,0 +1,23 @@
+# Dependency directory
+node_modules/
+
+# Compiled JavaScript directory
+dist/
+
+# Environment configurations
+.env
+.env.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# IDE files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

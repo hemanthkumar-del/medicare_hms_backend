@@ -1,0 +1,562 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "MediCare HMS API Documentation",
+    "description": "Production-ready backend API specifications for Hospital Management System (HMS)",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000",
+      "description": "Development Local Server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "cookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "token"
+      },
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Check API health status",
+        "responses": {
+          "200": {
+            "description": "Server is up and database is connected."
+          }
+        }
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "summary": "Register a new user (Patient by default)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "email", "password", "phone"],
+                "properties": {
+                  "name": { "type": "string", "example": "Alice Johnson" },
+                  "email": { "type": "string", "example": "alice.j@example.com" },
+                  "password": { "type": "string", "example": "password123" },
+                  "phone": { "type": "string", "example": "+1 555-0111" },
+                  "role": { "type": "string", "enum": ["admin", "doctor", "patient"], "example": "patient" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully registered."
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "summary": "Authenticate user session",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": { "type": "string", "example": "admin@medicare.com" },
+                  "password": { "type": "string", "example": "admin123" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Session authenticated."
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "summary": "Logout current user session",
+        "responses": {
+          "200": {
+            "description": "Session cookies cleared."
+          }
+        }
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "summary": "Get details of currently authenticated profile",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved profile details."
+          }
+        }
+      }
+    },
+    "/api/patients": {
+      "get": {
+        "summary": "Get list of all patients",
+        "responses": {
+          "200": {
+            "description": "Patients list returned."
+          }
+        }
+      },
+      "post": {
+        "summary": "Register a new patient record (Doctor/Admin access only)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "age", "gender", "phone", "email", "address", "bloodGroup", "diagnosis", "admissionDate"],
+                "properties": {
+                  "name": { "type": "string", "example": "Emma Wilson" },
+                  "age": { "type": "number", "example": 34 },
+                  "gender": { "type": "string", "enum": ["Male", "Female", "Other"], "example": "Female" },
+                  "phone": { "type": "string", "example": "+1 555-0133" },
+                  "email": { "type": "string", "example": "emma.w@example.com" },
+                  "address": { "type": "string", "example": "789 Oak Ave, Bellevue, WA" },
+                  "bloodGroup": { "type": "string", "example": "B-" },
+                  "diagnosis": { "type": "string", "example": "Chronic migraine treatment" },
+                  "admissionDate": { "type": "string", "example": "2026-06-28" },
+                  "status": { "type": "string", "enum": ["Admitted", "Discharged", "Outpatient"], "example": "Outpatient" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Patient record registered successfully."
+          }
+        }
+      }
+    },
+    "/api/patients/{id}": {
+      "get": {
+        "summary": "Fetch individual patient details",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Patient detail returned."
+          }
+        }
+      },
+      "put": {
+        "summary": "Modify patient details (Doctor/Admin access only)",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "diagnosis": { "type": "string", "example": "Severe chronic migraine treatment" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Patient detail updated successfully."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove patient record (Admin access only)",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Patient record deleted successfully."
+          }
+        }
+      }
+    },
+    "/api/doctors": {
+      "get": {
+        "summary": "List all doctors",
+        "responses": {
+          "200": {
+            "description": "Doctors list."
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new doctor record (Admin access only)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["user", "name", "specialization", "experience", "email", "phone"],
+                "properties": {
+                  "user": { "type": "string", "example": "660c1d683707bc1234567890" },
+                  "name": { "type": "string", "example": "Dr. Sarah Connor" },
+                  "specialization": { "type": "string", "example": "Cardiologist" },
+                  "experience": { "type": "string", "example": "12 Years" },
+                  "email": { "type": "string", "example": "sarah.connor@medicare.com" },
+                  "phone": { "type": "string", "example": "+1 555-0192" },
+                  "biography": { "type": "string", "example": "Dr. Sarah Connor is a leading cardiologist..." }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Doctor record created successfully."
+          }
+        }
+      }
+    },
+    "/api/doctors/{id}": {
+      "get": {
+        "summary": "Fetch doctor profile detail",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Doctor profile details returned."
+          }
+        }
+      },
+      "put": {
+        "summary": "Modify doctor details (Admin/Doctor access only)",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "availabilityStatus": { "type": "string", "example": "On Leave" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Doctor record updated successfully."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove doctor record (Admin access only)",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Doctor record deleted successfully."
+          }
+        }
+      }
+    },
+    "/api/appointments": {
+      "get": {
+        "summary": "List all appointments",
+        "responses": {
+          "200": {
+            "description": "Appointments list."
+          }
+        }
+      },
+      "post": {
+        "summary": "Book a new appointment slot",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["patient", "doctor", "date", "timeSlot"],
+                "properties": {
+                  "patient": { "type": "string", "example": "660c1d683707bc1234567891" },
+                  "doctor": { "type": "string", "example": "660c1d683707bc1234567892" },
+                  "date": { "type": "string", "example": "2026-07-06" },
+                  "timeSlot": { "type": "string", "example": "09:00 AM" },
+                  "notes": { "type": "string", "example": "Routine blood pressure check." }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Appointment booked successfully."
+          }
+        }
+      }
+    },
+    "/api/appointments/{id}": {
+      "get": {
+        "summary": "Fetch individual appointment details",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Appointment details returned."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove appointment record (Admin access only)",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Appointment deleted successfully."
+          }
+        }
+      }
+    },
+    "/api/appointments/{id}/status": {
+      "put": {
+        "summary": "Modify appointment status (Doctor/Admin access only)",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["status"],
+                "properties": {
+                  "status": { "type": "string", "enum": ["Pending", "Confirmed", "Cancelled", "Completed"], "example": "Confirmed" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Appointment status updated successfully."
+          }
+        }
+      }
+    },
+    "/api/medicines": {
+      "get": {
+        "summary": "Get all medicines list in stock",
+        "responses": {
+          "200": {
+            "description": "Medicines list."
+          }
+        }
+      },
+      "post": {
+        "summary": "Add new medicine item to stock (Doctor/Admin access only)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "category", "strength", "stock", "price", "manufacturer"],
+                "properties": {
+                  "name": { "type": "string", "example": "Amoxicillin" },
+                  "category": { "type": "string", "example": "Capsule" },
+                  "strength": { "type": "string", "example": "500mg" },
+                  "stock": { "type": "number", "example": 120 },
+                  "price": { "type": "number", "example": 15.50 },
+                  "manufacturer": { "type": "string", "example": "BioPharma Corp" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Medicine added successfully."
+          }
+        }
+      }
+    },
+    "/api/medicines/{id}": {
+      "get": {
+        "summary": "Fetch medicine item info",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Medicine details returned."
+          }
+        }
+      },
+      "put": {
+        "summary": "Modify medicine details (Doctor/Admin access only)",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "stock": { "type": "number", "example": 150 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Medicine stock updated."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove medicine item from inventory (Admin access only)",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Medicine removed from stock."
+          }
+        }
+      }
+    },
+    "/api/prescriptions": {
+      "get": {
+        "summary": "List all prescriptions",
+        "responses": {
+          "200": {
+            "description": "Prescriptions list."
+          }
+        }
+      },
+      "post": {
+        "summary": "Log a new prescription pad (Doctor/Admin access only)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["patient", "doctor", "date", "medicines", "diagnosis"],
+                "properties": {
+                  "patient": { "type": "string", "example": "660c1d683707bc1234567891" },
+                  "doctor": { "type": "string", "example": "660c1d683707bc1234567892" },
+                  "date": { "type": "string", "example": "2026-07-01" },
+                  "diagnosis": { "type": "string", "example": "Stage 1 Hypertension" },
+                  "notes": { "type": "string", "example": "Limit sodium intake." },
+                  "medicines": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": ["medicineName", "dosage", "duration", "instruction"],
+                      "properties": {
+                        "medicineName": { "type": "string", "example": "Lisinopril" },
+                        "dosage": { "type": "string", "example": "1-0-0 (Morning)" },
+                        "duration": { "type": "string", "example": "30 Days" },
+                        "instruction": { "type": "string", "example": "Take before food" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Prescription logged."
+          }
+        }
+      }
+    },
+    "/api/prescriptions/{id}": {
+      "get": {
+        "summary": "Fetch individual prescription details",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Prescription details returned."
+          }
+        }
+      },
+      "put": {
+        "summary": "Modify prescription details (Doctor/Admin access only)",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "diagnosis": { "type": "string", "example": "Stage 1 Essential Hypertension" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Prescription updated."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove prescription record (Admin access only)",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Prescription deleted."
+          }
+        }
+      }
+    }
+  }
+}
