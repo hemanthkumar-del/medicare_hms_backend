@@ -7,7 +7,11 @@ export const initializeFirebase = (): void => {
   try {
     const serviceAccountEnv = process.env.FIREBASE_SERVICE_ACCOUNT;
     if (serviceAccountEnv) {
-      const serviceAccount = JSON.parse(serviceAccountEnv);
+      const trimmedEnv = serviceAccountEnv.trim();
+      if (trimmedEnv.startsWith('<') || trimmedEnv.startsWith('YOUR_') || trimmedEnv.includes('paste')) {
+        throw new Error('FIREBASE_SERVICE_ACCOUNT contains placeholder text instead of valid Firebase Admin SDK JSON credentials.');
+      }
+      const serviceAccount = JSON.parse(trimmedEnv);
       initializeApp({
         credential: cert(serviceAccount),
       });
@@ -20,7 +24,8 @@ export const initializeFirebase = (): void => {
       logger.info('Firebase Admin SDK initialized using application default credentials.');
     }
   } catch (error: any) {
-    logger.warn(`Firebase Admin SDK initialization warning: ${error.message}. Real Google Sign-in verification will fail until credentials are provided in FIREBASE_SERVICE_ACCOUNT env var.`);
+    logger.error(`Firebase Admin SDK initialization failed: ${error.message}`);
+    throw error;
   }
 };
 

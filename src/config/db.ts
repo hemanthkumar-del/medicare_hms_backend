@@ -4,6 +4,9 @@ import { logger } from '../utils/logger';
 export const connectDB = async (): Promise<void> => {
   try {
     const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/medicare_hms';
+    if (!mongoURI.startsWith('mongodb://') && !mongoURI.startsWith('mongodb+srv://')) {
+      throw new Error(`Invalid MONGO_URI scheme: Connection string must start with "mongodb://" or "mongodb+srv://". (Got: "${mongoURI}"). Please verify MONGO_URI in your Render Environment settings.`);
+    }
     logger.info(`Attempting to connect to Database...`);
     
     mongoose.connection.on('connected', () => {
