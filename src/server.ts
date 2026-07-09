@@ -4,11 +4,15 @@ dotenv.config();
 
 import app from './app';
 import { connectDB, disconnectDB } from './config/db';
+import { initializeFirebase } from './config/firebase';
 import { logger } from './utils/logger';
 
 const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
+  // Initialize Firebase Admin SDK
+  initializeFirebase();
+
   // Connect database
   await connectDB();
 

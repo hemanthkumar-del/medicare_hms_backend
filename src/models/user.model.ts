@@ -6,10 +6,13 @@ const userSchema = new Schema<IUser>(
   {
     name: { type: String, required: true, trim: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-    password: { type: String, required: true },
-    phone: { type: String, required: true, trim: true },
+    password: { type: String, required: false },
+    phone: { type: String, required: false, trim: true },
     role: { type: String, enum: ['admin', 'doctor', 'patient'], default: 'patient' },
     profileImageUrl: { type: String, default: null },
+    googleId: { type: String, default: null },
+    photoUrl: { type: String, default: null },
+    provider: { type: String, enum: ['local', 'google'], default: 'local' },
   },
   {
     timestamps: true,
@@ -18,7 +21,7 @@ const userSchema = new Schema<IUser>(
 
 // Mongoose pre-save hook to hash password
 userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
+  if (!this.password || !this.isModified('password')) return next();
   try {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);

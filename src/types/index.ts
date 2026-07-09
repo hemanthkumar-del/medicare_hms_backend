@@ -3,10 +3,13 @@ import { Document, Types } from 'mongoose';
 export interface IUser extends Document {
   name: string;
   email: string;
-  password: string;
-  phone: string;
+  password?: string;
+  phone?: string;
   role: 'admin' | 'doctor' | 'patient';
   profileImageUrl: string | null;
+  googleId?: string | null;
+  photoUrl?: string | null;
+  provider: 'local' | 'google';
   createdAt: Date;
   updatedAt: Date;
   comparePassword(password: string): Promise<boolean>;

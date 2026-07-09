@@ -109,5 +109,38 @@ export class AuthController {
       next(error);
     }
   };
+
+  public googleLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { idToken } = req.body;
+      const { user, token } = await this.authService.googleLogin(idToken);
+
+      // Set Cookie
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        sameSite: 'lax',
+      });
+
+      res.status(200).json({
+        status: 'success',
+        message: 'Google login successful.',
+        data: {
+          token,
+          user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone || '',
+            role: user.role,
+            profileImageUrl: user.profileImageUrl || user.photoUrl || '',
+          },
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 export default AuthController;
