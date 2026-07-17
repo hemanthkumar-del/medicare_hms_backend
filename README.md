@@ -113,15 +113,47 @@ npm start
 
 ---
 
-## DevOps and Deploying to Render
+## 🐳 Docker & Docker Compose Setup
 
-This application is ready to deploy directly to **Render** using the provided `render.yaml` template:
-1. Connect your repository to Render.
-2. Render will auto-discover the `render.yaml` file.
-3. Configure the `MONGO_URI` environment variable in the Render dashboard.
+This project can be containerized using the included Docker assets to run in any isolated environment (including AWS ECS, EC2, or local developer configurations) alongside a MongoDB server.
 
-Alternatively, build a container using the optimized **multi-stage Dockerfile**:
+### 1. Prerequisites
+* [Docker Desktop](https://www.docker.com/products/docker-desktop/) (macOS, Windows, or Linux)
+* [Docker Compose](https://docs.docker.com/compose/install/) (included in Docker Desktop)
+
+### 2. Configure Environment Variables
+Duplicate `.env.example` to create `.env`:
 ```bash
-docker build -t medicare-hms-backend .
-docker run -p 5000:5000 medicare-hms-backend
+cp .env.example .env
 ```
+Ensure the variables are populated. When running inside Docker Compose, the database server is resolved using the service hostname `mongodb`. Thus, set:
+```env
+MONGO_URI=mongodb://mongodb:27017/medicare_hms
+```
+
+### 3. Build & Start Containers
+Start the services in detached mode (background):
+```bash
+docker compose up --build -d
+```
+This starts two containers:
+* **`fastcure-mongodb`**: A MongoDB server persistent volume map.
+* **`fastcure-backend`**: The Node.js Express server listening on port `5000`.
+
+### 4. Stop Containers
+To bring down the containers and preserve database volumes:
+```bash
+docker compose down
+```
+To stop the containers and completely wipe out the persistent database volume storage:
+```bash
+docker compose down -v
+```
+
+### 5. Troubleshooting
+* **Database Connection Timeout**: Ensure the database service matches the hostname in your `.env` connection string (`mongodb://mongodb:27017/medicare_hms`).
+* **Port Conflicts**: If port `5000` or `27017` is already bound to another local service, stop that service or edit the mapping ports inside `docker-compose.yml`.
+* **Inspect Container Logs**: Inspect logs for the backend server to diagnose starting errors:
+  ```bash
+  docker logs fastcure-backend
+  ```
