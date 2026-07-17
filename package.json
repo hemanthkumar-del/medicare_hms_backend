@@ -1,7 +1,7 @@
 {
-  "name": "medicare_hms_backend",
+  "name": "fastcure-backend",
   "version": "1.0.0",
-  "description": "Production-ready Node.js, Express, TypeScript backend for MediCare HMS",
+  "description": "Production-ready Node.js, Express, TypeScript backend for FastCure",
   "main": "dist/server.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
@@ -12,8 +12,7 @@
     "express",
     "typescript",
     "mongodb",
-    "hms",
-    "medicare"
+    "fastcure"
   ],
   "author": "Antigravity Dev Team",
   "license": "ISC",

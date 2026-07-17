@@ -1,6 +1,6 @@
-# MediCare HMS Backend
+# FastCure Backend
 
-Production-ready backend API service for the MediCare Hospital Management System (HMS), engineered using Node.js, Express.js, TypeScript, and MongoDB.
+Production-ready backend API service for the FastCure Smart Healthcare System, engineered using Node.js, Express.js, TypeScript, and MongoDB.
 
 Features a layered architecture (Controller-Service-Repository patterns), strict TypeScript compiling, Zod request body validation, Helmet-enhanced HTTP security, cookie-based session management, winston logging, Swagger docs, and containerized deployment assets.
 
@@ -87,7 +87,7 @@ Fill in the configuration variables:
 ```env
 PORT=5000
 MONGO_URI=mongodb://localhost:27017/medicare_hms
-JWT_SECRET=supersecretjwtkeyforhmsmedicaredevdevelopment
+JWT_SECRET=supersecretjwtkeyforfastcuredevdevelopment
 JWT_EXPIRES_IN=7d
 ```
 
