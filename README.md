@@ -157,3 +157,16 @@ docker compose down -v
   ```bash
   docker logs fastcure-backend
   ```
+
+---
+
+## 🚀 Production AWS EC2 Deployment
+
+Complete step-by-step guides and configurations are available in the [docs/](docs) directory:
+
+1. **EC2 Provisioning & Security**: See [docs/aws_deployment.md](docs/aws_deployment.md) to set up security groups, launch Ubuntu instances, and configure backups/rollbacks.
+2. **Nginx Reverse Proxy**: Use [docs/nginx.conf.example](docs/nginx.conf.example) to establish connection maps routing incoming HTTP/HTTPS traffic to the containers.
+3. **Docker Launch Setup**: Follow [docs/docker_deployment.md](docs/docker_deployment.md) to install Docker, load environments, and manage service lifecycles.
+4. **SSL/TLS Encryption**: See [docs/ssl_setup.md](docs/ssl_setup.md) to configure Let's Encrypt certificates using Certbot.
+5. **Fallback Node runner**: If Docker is not preferred, check [pm2.config.js](pm2.config.js) to configure cluster execution via PM2.
+
