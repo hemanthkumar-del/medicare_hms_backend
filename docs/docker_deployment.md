@@ -34,7 +34,7 @@ docker compose version
 ## 3. Clone Repository & Setup Environment
 Clone the backend repository onto the remote host:
 ```bash
-git clone https://github.com/hemanthkumar-del/medicare_hms_backend.git hms_backend
+git clone https://github.com/hemanthkumar-del/FastCure-Backend.git hms_backend
 cd hms_backend
 ```
 Create a production `.env` configuration:
